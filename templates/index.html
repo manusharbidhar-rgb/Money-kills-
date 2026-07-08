@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💰 Mobile Trading Bot Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: #667eea;
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .stat-value {
+            color: #333;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .profit {
+            color: #27ae60;
+        }
+
+        .loss {
+            color: #e74c3c;
+        }
+
+        .neutral {
+            color: #f39c12;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .position-item {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+
+        .position-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .position-symbol {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .position-type {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .position-type.buy {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .position-type.sell {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .position-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .position-info-item {
+            color: #666;
+        }
+
+        .position-info-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            background: #f0f0f0;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            .card {
+                padding: 15px;
+                margin-bottom: 10px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .position-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>💰 Trading Bot Mobile</h1>
+            <p>Real-time Account & Position Monitoring</p>
+        </div>
+
+        <!-- Connection Status -->
+        <div id="status" class="status disconnected">
+            ⚫ Disconnected - Please login to MT5
+        </div>
+
+        <!-- Login Section -->
+        <div id="loginCard" class="card">
+            <div class="card-title">🔐 Connect to MT5</div>
+            <div class="input-group">
+                <label>Account Number</label>
+                <input type="text" id="account" placeholder="e.g., 123456789">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Your MT5 password">
+            </div>
+            <div class="input-group">
+                <label>Server</label>
+                <input type="text" id="server" placeholder="e.g., XMGlobal-MT5" value="XMGlobal-MT5">
+            </div>
+            <button class="btn btn-primary" onclick="connectMT5()">🔗 Connect</button>
+        </div>
+
+        <!-- Main Dashboard (Hidden until connected) -->
+        <div id="dashboard" style="display: none;">
+            <!-- Account Info -->
+            <div class="card">
+                <div class="card-title">📊 Account Summary</div>
+                <div class="stat-row">
+                    <span class="stat-label">Balance</span>
+                    <span class="stat-value" id="balance">$0.00</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Equity</span>
+                    <span class="stat-value" id="equity">$0.00</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Free Margin</span>
+                    <span class="stat-value" id="freeMargin">$0.00</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Margin Level</span>
+                    <span class="stat-value" id="marginLevel">0%</span>
+                </div>
+            </div>
+
+            <!-- Trading Stats -->
+            <div class="card">
+                <div class="card-title">📈 Trading Stats</div>
+                <div class="stat-row">
+                    <span class="stat-label">Open Positions</span>
+                    <span class="stat-value" id="openPositions">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Today's Profit</span>
+                    <span class="stat-value" id="todayProfit">$0.00</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Win Rate</span>
+                    <span class="stat-value" id="winRate">0%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Total Trades Today</span>
+                    <span class="stat-value" id="totalTrades">0</span>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('positions')">📍 Positions</button>
+                <button class="tab-btn" onclick="switchTab('history')">📋 History</button>
+                <button class="tab-btn" onclick="switchTab('trade')">➕ New Trade</button>
+            </div>
+
+            <!-- Positions Tab -->
+            <div id="positions" class="tab-content active card">
+                <div class="card-title">📍 Open Positions</div>
+                <div id="positionsList"></div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history" class="tab-content card">
+                <div class="card-title">📋 Trading History</div>
+                <div id="historyList"></div>
+            </div>
+
+            <!-- Trade Tab -->
+            <div id="trade" class="tab-content card">
+                <div class="card-title">➕ Place New Trade</div>
+                <div class="input-group">
+                    <label>Symbol</label>
+                    <select id="symbol">
+                        <option>EURUSD</option>
+                        <option>GBPUSD</option>
+                        <option>USDJPY</option>
+                        <option>XAUUSD</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Type</label>
+                    <select id="orderType">
+                        <option>BUY</option>
+                        <option>SELL</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Volume (Lot)</label>
+                    <input type="number" id="volume" step="0.01" value="0.01" min="0.01" max="10">
+                </div>
+                <div class="input-group">
+                    <label>Entry Price</label>
+                    <input type="number" id="entryPrice" step="0.00001" placeholder="Auto - current price">
+                </div>
+                <div class="input-group">
+                    <label>Stop Loss</label>
+                    <input type="number" id="stopLoss" step="0.00001" placeholder="0 to skip">
+                </div>
+                <div class="input-group">
+                    <label>Take Profit</label>
+                    <input type="number" id="takeProfit" step="0.00001" placeholder="0 to skip">
+                </div>
+                <button class="btn btn-success" onclick="placeOrder()">✅ Place Trade</button>
+                <button class="btn btn-danger" onclick="logout()">🚪 Disconnect</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let connected = false;
+
+        async function connectMT5() {
+            const account = document.getElementById('account').value;
+            const password = document.getElementById('password').value;
+            const server = document.getElementById('server').value;
+
+            if (!account || !password || !server) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/connect', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({account, password, server})
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    connected = true;
+                    document.getElementById('loginCard').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    updateStatus('connected');
+                    refreshData();
+                    setInterval(refreshData, 5000); // Auto-refresh every 5 seconds
+                } else {
+                    alert('Connection failed: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function refreshData() {
+            if (!connected) return;
+
+            try {
+                const statsRes = await fetch('/api/stats');
+                const stats = await statsRes.json();
+
+                document.getElementById('balance').textContent = '$' + stats.account.balance.toFixed(2);
+                document.getElementById('equity').textContent = '$' + stats.account.equity.toFixed(2);
+                document.getElementById('freeMargin').textContent = '$' + stats.account.free_margin.toFixed(2);
+                document.getElementById('marginLevel').textContent = stats.account.margin_level.toFixed(0) + '%';
+                document.getElementById('openPositions').textContent = stats.open_positions;
+                document.getElementById('todayProfit').textContent = '$' + stats.today_profit.toFixed(2);
+                document.getElementById('winRate').textContent = stats.win_rate.toFixed(0) + '%';
+                document.getElementById('totalTrades').textContent = stats.total_trades;
+
+                // Update profit color
+                const profitElement = document.getElementById('todayProfit');
+                if (stats.today_profit > 0) {
+                    profitElement.classList.add('profit');
+                    profitElement.classList.remove('loss');
+                } else if (stats.today_profit < 0) {
+                    profitElement.classList.add('loss');
+                    profitElement.classList.remove('profit');
+                }
+
+                // Refresh positions
+                await refreshPositions();
+                await refreshHistory();
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+            }
+        }
+
+        async function refreshPositions() {
+            try {
+                const response = await fetch('/api/positions');
+                const data = await response.json();
+                const list = document.getElementById('positionsList');
+
+                if (data.positions.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div>No open positions</div>';
+                    return;
+                }
+
+                list.innerHTML = data.positions.map(pos => `
+                    <div class="position-item">
+                        <div class="position-header">
+                            <span class="position-symbol">${pos.symbol}</span>
+                            <span class="position-type ${pos.type.toLowerCase()}">${pos.type}</span>
+                        </div>
+                        <div class="position-info">
+                            <div class="position-info-item">
+                                <span class="position-info-label">Volume:</span> ${pos.volume}
+                            </div>
+                            <div class="position-info-item">
+                                <span class="position-info-label">Entry:</span> ${pos.open_price}
+                            </div>
+                            <div class="position-info-item">
+                                <span class="position-info-label">Current:</span> ${pos.current_price}
+                            </div>
+                            <div class="position-info-item">
+                                <span class="position-info-label profit" style="color: ${pos.profit > 0 ? '#27ae60' : '#e74c3c'}">
+                                    P&L: $${pos.profit.toFixed(2)}
+                                </span>
+                            </div>
+                        </div>
+                        <button class="btn btn-danger" onclick="closePosition(${pos.ticket})">Close</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error refreshing positions:', error);
+            }
+        }
+
+        async function refreshHistory() {
+            try {
+                const response = await fetch('/api/history?days=1');
+                const data = await response.json();
+                const list = document.getElementById('historyList');
+
+                if (data.history.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div>No trades today</div>';
+                    return;
+                }
+
+                list.innerHTML = data.history.map(trade => `
+                    <div class="position-item">
+                        <div class="position-header">
+                            <span class="position-symbol">${trade.symbol}</span>
+                            <span class="position-type ${trade.type.toLowerCase()}">${trade.type}</span>
+                        </div>
+                        <div class="position-info">
+                            <div class="position-info-item">
+                                <span class="position-info-label">Price:</span> ${trade.price}
+                            </div>
+                            <div class="position-info-item">
+                                <span class="position-info-label profit" style="color: ${trade.profit > 0 ? '#27ae60' : '#e74c3c'}">
+                                    P&L: $${trade.profit.toFixed(2)}
+                                </span>
+                            </div>
+                            <div class="position-info-item">
+                                <span class="position-info-label">Time:</span> ${trade.time}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error refreshing history:', error);
+            }
+        }
+
+        async function placeOrder() {
+            const symbol = document.getElementById('symbol').value;
+            const type = document.getElementById('orderType').value;
+            const volume = parseFloat(document.getElementById('volume').value);
+            const entryPrice = parseFloat(document.getElementById('entryPrice').value) || 0;
+            const stopLoss = parseFloat(document.getElementById('stopLoss').value) || 0;
+            const takeProfit = parseFloat(document.getElementById('takeProfit').value) || 0;
+
+            try {
+                const response = await fetch('/api/order', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({symbol, type, volume, price: entryPrice, sl: stopLoss, tp: takeProfit, comment: 'Mobile trade'})
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Trade placed successfully!');
+                    refreshData();
+                } else {
+                    alert('❌ Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function closePosition(ticket) {
+            if (!confirm('Close this position?')) return;
+
+            try {
+                const response = await fetch('/api/close', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ticket})
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Position closed!');
+                    refreshData();
+                } else {
+                    alert('❌ Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function switchTab(tab) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function updateStatus(status) {
+            const statusDiv = document.getElementById('status');
+            if (status === 'connected') {
+                statusDiv.classList.add('connected');
+                statusDiv.classList.remove('disconnected');
+                statusDiv.textContent = '🟢 Connected to MT5';
+            } else {
+                statusDiv.classList.remove('connected');
+                statusDiv.classList.add('disconnected');
+                statusDiv.textContent = '⚫ Disconnected';
+            }
+        }
+
+        function logout() {
+            if (confirm('Disconnect from MT5?')) {
+                connected = false;
+                document.getElementById('loginCard').style.display = 'block';
+                document.getElementById('dashboard').style.display = 'none';
+                updateStatus('disconnected');
+                document.getElementById('account').value = '';
+                document.getElementById('password').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
